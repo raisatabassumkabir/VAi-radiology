@@ -60,7 +60,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const data: Task[] = await response.json();
       set({ tasks: data, isLoading: false });
     } catch (err: any) {
-      console.error('Error fetching tasks by date:', err);
+      console.warn('Network issue while fetching tasks (Backend might be offline):', err.message);
       set({ error: err.message || 'An error occurred', isLoading: false });
     }
   },

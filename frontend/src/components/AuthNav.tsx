@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { LayoutDashboard, Image as ImageIcon, LogOut, LogIn } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -10,11 +10,18 @@ export const AuthNav: React.FC = () => {
   const token = useAuthStore((state) => state.token);
   const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleLogout = () => {
     logout();
     router.push('/login');
   };
+
+  if (!isMounted) return null;
 
   return (
     <nav className="flex items-center gap-6">

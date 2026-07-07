@@ -94,8 +94,20 @@ export const AnnotationStudio: React.FC = () => {
     }
   }, [token]);
 
+  if (!isMounted) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#0a0a0a] text-slate-400">
+        <Loader2 className="animate-spin w-8 h-8 text-indigo-500" />
+      </div>
+    );
+  }
+
   if (!token) {
-    return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin w-8 h-8 text-indigo-500" /></div>;
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#0a0a0a] text-slate-400">
+        <Loader2 className="animate-spin w-8 h-8 text-indigo-500" />
+      </div>
+    );
   }
 
   // Handle image upload
@@ -247,6 +259,13 @@ export const AnnotationStudio: React.FC = () => {
 
   const ptToPx = (pct: number, max: number) => (pct / 100) * max;
 
+  const getImageUrl = (url: string) => {
+    if (url.startsWith('/')) {
+      return `http://localhost:8000${url}`;
+    }
+    return url;
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full max-w-7xl mx-auto px-4 py-8 h-[calc(100vh-140px)] min-h-[600px]">
       
@@ -291,7 +310,7 @@ export const AnnotationStudio: React.FC = () => {
                 }`}
               >
                 <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/10 flex items-center justify-center">
-                  <img src={img.image_url} alt={img.title} className="w-full h-full object-cover" />
+                  <img src={getImageUrl(img.image_url)} alt={img.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-slate-200 truncate group-hover:text-white transition">
@@ -366,7 +385,7 @@ export const AnnotationStudio: React.FC = () => {
               style={{ display: 'inline-block' }}
             >
               <img
-                src={activeImage.image_url}
+                src={getImageUrl(activeImage.image_url)}
                 alt="Annotation Target"
                 className="max-h-[500px] w-auto max-w-full object-contain pointer-events-none"
               />

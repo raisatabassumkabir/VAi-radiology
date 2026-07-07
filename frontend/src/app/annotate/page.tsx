@@ -1,4 +1,4 @@
-import { AnnotationStudio } from '@/components/AnnotationStudio';
+import AnnotationStudioWrapper from '@/components/AnnotationStudioWrapper';
 
 export const metadata = {
   title: 'Image Annotation Studio | Epic Studio',
@@ -6,5 +6,9 @@ export const metadata = {
 };
 
 export default function AnnotatePage() {
-  return <AnnotationStudio />;
+  return (
+    <main className="min-h-screen bg-[#0a0a0a]">
+      <AnnotationStudioWrapper />
+    </main>
+  );
 }
