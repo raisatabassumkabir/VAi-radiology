@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, ChevronLeft, ChevronRight, Trash2, Save, Image as ImageIcon, Info, Loader2 } from 'lucide-react';
+import { Upload, ChevronLeft, ChevronRight, Trash2, Save, Image as ImageIcon, Info, Loader2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Stage, Layer, Line, Circle } from 'react-konva';
@@ -16,7 +16,7 @@ type Polygon = PolygonPoint[];
 interface AnnotatedImage {
   id: number;
   title: string;
-  image_url: string;
+  image: string;
   polygons: Polygon[];
 }
 
@@ -153,6 +153,36 @@ export const AnnotationStudio: React.FC = () => {
     }
   };
 
+  const handleDeleteImage = async (id: number) => {
+    const token = useAuthStore.getState().token;
+    try {
+      const response = await fetch(`http://localhost:8000/api/annotated-images/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': token ? `Token ${token}` : '',
+        },
+      });
+      if (response.ok) {
+        setImages((prev) => {
+          const filtered = prev.filter((img) => img.id !== id);
+          if (activeImage?.id === id) {
+            setActiveIndex(filtered.length > 0 ? 0 : -1);
+            cancelDrawing();
+            setSelectedPolygonIdx(null);
+          } else {
+            const deletedIdx = prev.findIndex((img) => img.id === id);
+            if (deletedIdx !== -1 && deletedIdx < activeIndex) {
+              setActiveIndex(activeIndex - 1);
+            }
+          }
+          return filtered;
+        });
+      }
+    } catch (error) {
+      console.error('Failed to delete image:', error);
+    }
+  };
+
   // Convert pixel coordinates to percentages
   const getPercentageCoords = (x: number, y: number): PolygonPoint => {
     return {
@@ -259,7 +289,8 @@ export const AnnotationStudio: React.FC = () => {
 
   const ptToPx = (pct: number, max: number) => (pct / 100) * max;
 
-  const getImageUrl = (url: string) => {
+  const getImageUrl = (url?: string | null): string | undefined => {
+    if (!url) return undefined;
     if (url.startsWith('/')) {
       return `http://localhost:8000${url}`;
     }
@@ -303,14 +334,27 @@ export const AnnotationStudio: React.FC = () => {
                   setSelectedPolygonIdx(null);
                   setActiveIndex(idx);
                 }}
-                className={`group flex items-center gap-3 p-2.5 rounded-2xl border cursor-pointer transition ${
+                className={`group flex items-center gap-3 p-2.5 rounded-2xl border cursor-pointer transition relative ${
                   idx === activeIndex
                     ? 'border-indigo-500 bg-indigo-500/10'
                     : 'border-white/5 bg-white/[0.02] hover:bg-white/5 hover:border-white/15'
                 }`}
               >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteImage(img.id);
+                  }}
+                  className="absolute top-2 right-2 p-1 rounded-full bg-slate-900/50 hover:bg-rose-500/80 text-slate-300 hover:text-white transition opacity-0 group-hover:opacity-100"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
                 <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/10 flex items-center justify-center">
-                  <img src={getImageUrl(img.image_url)} alt={img.title} className="w-full h-full object-cover" />
+                  {getImageUrl(img.image) ? (
+                    <img src={getImageUrl(img.image)} alt={img.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-xs text-slate-500 font-medium">No Img</span>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-slate-200 truncate group-hover:text-white transition">
@@ -385,7 +429,7 @@ export const AnnotationStudio: React.FC = () => {
               style={{ display: 'inline-block' }}
             >
               <img
-                src={getImageUrl(activeImage.image_url)}
+                src={getImageUrl(activeImage.image)}
                 alt="Annotation Target"
                 className="max-h-[500px] w-auto max-w-full object-contain pointer-events-none"
               />
