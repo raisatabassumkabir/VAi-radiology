@@ -30,6 +30,7 @@ export const AnnotationStudio: React.FC = () => {
   const [currentPoints, setCurrentPoints] = useState<PolygonPoint[]>([]);
   const [mousePos, setMousePos] = useState<PolygonPoint | null>(null);
   const [selectedPolygonIdx, setSelectedPolygonIdx] = useState<number | null>(null);
+  const [hoveredPolygonIdx, setHoveredPolygonIdx] = useState<number | null>(null);
 
   // Resize handling for react-konva
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -198,12 +199,6 @@ export const AnnotationStudio: React.FC = () => {
     if (currentPoints.length === 0 && e.target.name() === 'polygon') {
       const idxStr = e.target.id();
       setSelectedPolygonIdx(parseInt(idxStr, 10));
-      return;
-    }
-
-    // If clicking on the first point to close
-    if (currentPoints.length >= 3 && e.target.name() === 'first-point') {
-      closePolygon();
       return;
     }
 
@@ -441,34 +436,62 @@ export const AnnotationStudio: React.FC = () => {
                     height={canvasSize.height}
                     onClick={handleStageClick}
                     onMouseMove={handleStageMouseMove}
+                    onDblClick={() => {
+                      if (currentPoints.length >= 3) closePolygon();
+                    }}
+                    onDblTap={() => {
+                      if (currentPoints.length >= 3) closePolygon();
+                    }}
                   >
                     <Layer>
-                      {/* Render closed polygons */}
+                      {/* Render closed polygons and their vertices */}
                       {activeImage.polygons.map((poly, idx) => {
                         const flatPoints = poly.flatMap((pt) => [
                           ptToPx(pt.x, canvasSize.width),
                           ptToPx(pt.y, canvasSize.height),
                         ]);
                         const isSelected = idx === selectedPolygonIdx;
+                        const isHovered = idx === hoveredPolygonIdx;
+                        const isHighlighted = isSelected || isHovered;
+                        
                         return (
-                          <Line
-                            key={idx}
-                            id={idx.toString()}
-                            name="polygon"
-                            points={flatPoints}
-                            closed
-                            fill={isSelected ? 'rgba(245,158,11,0.2)' : 'rgba(99,102,241,0.15)'}
-                            stroke={isSelected ? '#fbbf24' : '#818cf8'}
-                            strokeWidth={isSelected ? 2 : 1}
-                            onMouseEnter={(e) => {
-                              const container = e.target.getStage()?.container();
-                              if (container) container.style.cursor = 'pointer';
-                            }}
-                            onMouseLeave={(e) => {
-                              const container = e.target.getStage()?.container();
-                              if (container) container.style.cursor = 'crosshair';
-                            }}
-                          />
+                          <React.Fragment key={idx}>
+                            <Line
+                              id={idx.toString()}
+                              name="polygon"
+                              points={flatPoints}
+                              closed
+                              fill={isHighlighted ? 'rgba(245,158,11,0.2)' : 'rgba(167, 139, 250, 0.18)'}
+                              stroke={isHighlighted ? '#fbbf24' : '#a78bfa'}
+                              strokeWidth={isHighlighted ? 2.5 : 2}
+                              onMouseEnter={(e) => {
+                                const container = e.target.getStage()?.container();
+                                if (container) container.style.cursor = 'pointer';
+                                setHoveredPolygonIdx(idx);
+                              }}
+                              onMouseLeave={(e) => {
+                                const container = e.target.getStage()?.container();
+                                if (container) container.style.cursor = 'crosshair';
+                                setHoveredPolygonIdx(null);
+                              }}
+                            />
+                            {/* Visible Perimeter Vertices */}
+                            {poly.map((pt, ptIdx) => (
+                              <Circle
+                                key={`poly-${idx}-pt-${ptIdx}`}
+                                x={ptToPx(pt.x, canvasSize.width)}
+                                y={ptToPx(pt.y, canvasSize.height)}
+                                radius={isHighlighted ? 4.5 : 3.5}
+                                fill={isHighlighted ? '#fbbf24' : '#ffffff'}
+                                stroke={isHighlighted ? '#fbbf24' : '#8b5cf6'}
+                                strokeWidth={1.5}
+                                listening={false}
+                                shadowColor={isHighlighted ? '#fbbf24' : 'transparent'}
+                                shadowBlur={isHighlighted ? 6 : 0}
+                                shadowOpacity={isHighlighted ? 0.8 : 0}
+                              />
+                            ))}
+                          </React.Fragment>
                         );
                       })}
 
@@ -480,12 +503,14 @@ export const AnnotationStudio: React.FC = () => {
                               ptToPx(pt.x, canvasSize.width),
                               ptToPx(pt.y, canvasSize.height),
                             ]).concat(
-                              mousePos ? [ptToPx(mousePos.x, canvasSize.width), ptToPx(mousePos.y, canvasSize.height)] : []
+                              mousePos && typeof mousePos.x === 'number' && !isNaN(mousePos.x) && typeof mousePos.y === 'number' && !isNaN(mousePos.y) ? [ptToPx(mousePos.x, canvasSize.width), ptToPx(mousePos.y, canvasSize.height)] : []
                             )
                           }
                           stroke="#818cf8"
                           strokeWidth={2}
                           dash={[4, 4]}
+                          listening={false}
+                          perfectDrawEnabled={false}
                         />
                       )}
 
@@ -495,10 +520,26 @@ export const AnnotationStudio: React.FC = () => {
                           name="first-point"
                           x={ptToPx(currentPoints[0].x, canvasSize.width)}
                           y={ptToPx(currentPoints[0].y, canvasSize.height)}
-                          radius={7}
-                          fill="#6366f1"
+                          radius={6}
+                          hitStrokeWidth={20}
+                          strokeScaleEnabled={false}
+                          fill="#ec4899"
                           stroke="white"
                           strokeWidth={2}
+                          onClick={(e) => {
+                            e.evt.stopPropagation();
+                            e.cancelBubble = true;
+                            if (currentPoints.length >= 3) {
+                              closePolygon();
+                            }
+                          }}
+                          onTap={(e) => {
+                            e.evt.stopPropagation();
+                            e.cancelBubble = true;
+                            if (currentPoints.length >= 3) {
+                              closePolygon();
+                            }
+                          }}
                           onMouseEnter={(e) => {
                             e.target.scale({ x: 1.25, y: 1.25 });
                             const container = e.target.getStage()?.container();
@@ -511,21 +552,6 @@ export const AnnotationStudio: React.FC = () => {
                           }}
                         />
                       )}
-
-                      {/* Render vertices of selected polygon */}
-                      {selectedPolygonIdx !== null && activeImage.polygons[selectedPolygonIdx] &&
-                        activeImage.polygons[selectedPolygonIdx].map((pt, idx) => (
-                          <Circle
-                            key={`vert-${idx}`}
-                            x={ptToPx(pt.x, canvasSize.width)}
-                            y={ptToPx(pt.y, canvasSize.height)}
-                            radius={4.5}
-                            fill="#fbbf24"
-                            stroke="#0f172a"
-                            strokeWidth={1}
-                          />
-                        ))
-                      }
 
                       {/* Render vertices of active drawing */}
                       {currentPoints.map((pt, idx) => (
@@ -578,8 +604,10 @@ export const AnnotationStudio: React.FC = () => {
                   <div
                     key={idx}
                     onClick={() => setSelectedPolygonIdx(idx)}
-                    className={`flex justify-between items-center p-3 rounded-2xl border cursor-pointer ${
-                      isSelected ? 'border-amber-500 bg-amber-500/10' : 'border-white/5 hover:bg-white/5'
+                    onMouseEnter={() => setHoveredPolygonIdx(idx)}
+                    onMouseLeave={() => setHoveredPolygonIdx(null)}
+                    className={`flex justify-between items-center p-3 rounded-2xl border cursor-pointer transition-colors ${
+                      isSelected ? 'border-amber-500 bg-amber-500/10' : 'border-white/5 hover:bg-white/10 hover:border-white/20'
                     }`}
                   >
                     <span className="text-xs font-semibold text-slate-300">Shape #{idx + 1} ({poly.length} pts)</span>
