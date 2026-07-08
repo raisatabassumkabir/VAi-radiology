@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
@@ -10,6 +11,7 @@ router.register(r'tasks', TaskViewSet, basename='task')
 router.register(r'annotated-images', AnnotatedImageViewSet, basename='annotatedimage')
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/admin/', permanent=False)),  # Auto-redirect root to Admin
     path('admin/', admin.site.urls),
     path('api/login/', LoginView.as_view(), name='api-login'),
     path('api/', include(router.urls)),
