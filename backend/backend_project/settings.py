@@ -26,7 +26,14 @@ SECRET_KEY = 'django-insecure-k20fe#7(4re+=q_s4&5)qiqc*^ib!7k=rqpk%6as1g^8rm%kpm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Allow local development, any Render subdomain, and general wildcards for cloud routing
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.onrender.com',                  # Allows any Render domain
+    'vai-radiology.onrender.com',     # Explicitly allows your live URL
+    '*',                              # Foolproof wildcard to ensure zero routing blocks
+]
 
 
 # Application definition
