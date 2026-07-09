@@ -5,6 +5,9 @@ import { Upload, ChevronLeft, ChevronRight, Trash2, Save, Image as ImageIcon, In
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Stage, Layer, Line, Circle } from 'react-konva';
+import { KonvaEventObject } from 'konva/lib/Node';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface PolygonPoint {
   x: number; // percentage (0-100)
@@ -70,7 +73,7 @@ export const AnnotationStudio: React.FC = () => {
     setIsLoading(true);
     const token = useAuthStore.getState().token;
     try {
-      const response = await fetch('http://localhost:8000/api/annotated-images/', {
+      const response = await fetch(`${API_URL}/api/annotated-images/`, {
         headers: {
           'Authorization': token ? `Token ${token}` : '',
         }
@@ -83,7 +86,9 @@ export const AnnotationStudio: React.FC = () => {
         }
       }
     } catch (error) {
-      console.error('Error fetching images:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error fetching images:', error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +130,7 @@ export const AnnotationStudio: React.FC = () => {
 
       const token = useAuthStore.getState().token;
       try {
-        const response = await fetch('http://localhost:8000/api/annotated-images/', {
+        const response = await fetch(`${API_URL}/api/annotated-images/`, {
           method: 'POST',
           headers: {
             'Authorization': token ? `Token ${token}` : '',
@@ -144,7 +149,9 @@ export const AnnotationStudio: React.FC = () => {
           });
         }
       } catch (error) {
-        console.error('Upload failed:', error);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Upload failed:', error);
+        }
       }
     }
     
@@ -157,7 +164,7 @@ export const AnnotationStudio: React.FC = () => {
   const handleDeleteImage = async (id: number) => {
     const token = useAuthStore.getState().token;
     try {
-      const response = await fetch(`http://localhost:8000/api/annotated-images/${id}/`, {
+      const response = await fetch(`${API_URL}/api/annotated-images/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': token ? `Token ${token}` : '',
@@ -180,7 +187,9 @@ export const AnnotationStudio: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error('Failed to delete image:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Failed to delete image:', error);
+      }
     }
   };
 
@@ -192,7 +201,7 @@ export const AnnotationStudio: React.FC = () => {
     };
   };
 
-  const handleStageClick = (e: any) => {
+  const handleStageClick = (e: KonvaEventObject<MouseEvent>) => {
     if (!activeImage) return;
 
     // If clicking on a shape, select it (unless we're drawing)
@@ -203,7 +212,7 @@ export const AnnotationStudio: React.FC = () => {
     }
 
     const stage = e.target.getStage();
-    const pos = stage.getPointerPosition();
+    const pos = stage?.getPointerPosition();
     if (!pos) return;
 
     const coords = getPercentageCoords(pos.x, pos.y);
@@ -216,10 +225,10 @@ export const AnnotationStudio: React.FC = () => {
     }
   };
 
-  const handleStageMouseMove = (e: any) => {
+  const handleStageMouseMove = (e: KonvaEventObject<MouseEvent>) => {
     if (currentPoints.length === 0) return;
     const stage = e.target.getStage();
-    const pos = stage.getPointerPosition();
+    const pos = stage?.getPointerPosition();
     if (!pos) return;
     setMousePos(getPercentageCoords(pos.x, pos.y));
   };
@@ -258,7 +267,7 @@ export const AnnotationStudio: React.FC = () => {
     const token = useAuthStore.getState().token;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/annotated-images/${activeImage.id}/`, {
+      const response = await fetch(`${API_URL}/api/annotated-images/${activeImage.id}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -275,7 +284,9 @@ export const AnnotationStudio: React.FC = () => {
         alert('Failed to save annotations.');
       }
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(error);
+      }
       alert('Error updating annotations on server.');
     } finally {
       setIsSaving(false);
@@ -287,7 +298,7 @@ export const AnnotationStudio: React.FC = () => {
   const getImageUrl = (url?: string | null): string | undefined => {
     if (!url) return undefined;
     if (url.startsWith('/')) {
-      return `http://localhost:8000${url}`;
+      return `${API_URL}${url}`;
     }
     return url;
   };

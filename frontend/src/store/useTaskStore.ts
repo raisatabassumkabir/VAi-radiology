@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 export interface Task {
   id: number;
   title: string;
   priority: 'Low' | 'Medium' | 'High';
   status: 'To Do' | 'In Progress' | 'Done';
   due_date: string;
-  tags: string;
+  tags: string[];
 }
 
 interface TaskStore {
@@ -50,7 +52,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         headers['Authorization'] = `Token ${token}`;
       }
 
-      const response = await fetch(`http://localhost:8000/api/tasks/?date=${date}`, {
+      const response = await fetch(`${API_URL}/api/tasks/?date=${date}`, {
         headers
       });
 
@@ -59,9 +61,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       }
       const data: Task[] = await response.json();
       set({ tasks: data, isLoading: false });
-    } catch (err: any) {
-      console.warn('Network issue while fetching tasks (Backend might be offline):', err.message);
-      set({ error: err.message || 'An error occurred', isLoading: false });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('Network issue while fetching tasks (Backend might be offline):', errorMessage);
+      }
+      set({ error: errorMessage, isLoading: false });
     }
   },
 
@@ -81,7 +86,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         headers['Authorization'] = `Token ${token}`;
       }
 
-      const response = await fetch(`http://localhost:8000/api/tasks/${taskId}/`, {
+      const response = await fetch(`${API_URL}/api/tasks/${taskId}/`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify({ status: newStatus }),
@@ -97,8 +102,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
           task.id === taskId ? updatedTaskFromServer : task
         ),
       });
-    } catch (err) {
-      console.error('Error updating task status:', err);
+    } catch (err: unknown) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error updating task status:', err);
+      }
       set({ tasks: previousTasks }); // Rollback
     }
   },
@@ -113,7 +120,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         headers['Authorization'] = `Token ${token}`;
       }
 
-      const response = await fetch('http://localhost:8000/api/tasks/', {
+      const response = await fetch(`${API_URL}/api/tasks/`, {
         method: 'POST',
         headers,
         body: JSON.stringify(taskData),
@@ -125,8 +132,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       const newTask: Task = await response.json();
       set((state) => ({ tasks: [...state.tasks, newTask] }));
-    } catch (err) {
-      console.error('Error adding task:', err);
+    } catch (err: unknown) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error adding task:', err);
+      }
     }
   },
 
@@ -140,7 +149,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         headers['Authorization'] = `Token ${token}`;
       }
 
-      const response = await fetch(`http://localhost:8000/api/tasks/${taskId}/`, {
+      const response = await fetch(`${API_URL}/api/tasks/${taskId}/`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify(taskData),
@@ -154,8 +163,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       set((state) => ({
         tasks: state.tasks.map((t) => (t.id === taskId ? updatedTask : t)),
       }));
-    } catch (err) {
-      console.error('Error editing task:', err);
+    } catch (err: unknown) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error editing task:', err);
+      }
     }
   },
 
@@ -167,7 +178,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         headers['Authorization'] = `Token ${token}`;
       }
 
-      const response = await fetch(`http://localhost:8000/api/tasks/${taskId}/`, {
+      const response = await fetch(`${API_URL}/api/tasks/${taskId}/`, {
         method: 'DELETE',
         headers
       });
@@ -179,8 +190,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       set((state) => ({
         tasks: state.tasks.filter((t) => t.id !== taskId),
       }));
-    } catch (err) {
-      console.error('Error deleting task:', err);
+    } catch (err: unknown) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error deleting task:', err);
+      }
     }
   },
 }));

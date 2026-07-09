@@ -16,7 +16,7 @@ class Task(models.Model):
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     due_date = models.DateField()
-    tags = models.CharField(max_length=255)
+    tags = models.JSONField(default=list)
 
     def __str__(self):
         return self.title

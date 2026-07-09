@@ -60,7 +60,7 @@ export const KanbanBoard: React.FC = () => {
         priority,
         status: 'To Do',
         due_date: selectedDate,
-        tags: tagInput,
+        tags: tagInput.split(',').map(t => t.trim()).filter(Boolean),
       });
 
       setTitle('');
@@ -170,7 +170,7 @@ export const KanbanBoard: React.FC = () => {
                   <label className="text-xs font-semibold text-slate-400">Priority</label>
                   <select
                     value={priority}
-                    onChange={(e) => setPriority(e.target.value as any)}
+                    onChange={(e) => setPriority(e.target.value as 'Low' | 'Medium' | 'High')}
                     className="bg-slate-950 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-white text-sm outline-none transition cursor-pointer"
                   >
                     <option value="Low">Low</option>

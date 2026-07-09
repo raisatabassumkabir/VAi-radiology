@@ -56,7 +56,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
       {task.tags && task.tags.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mt-1">
-          {task.tags.split(',').map((tag, idx) => {
+          {task.tags.map((tag, idx) => {
             const trimmedTag = tag.trim();
             if (!trimmedTag) return null;
             return (
