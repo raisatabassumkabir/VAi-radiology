@@ -51,11 +51,13 @@ INSTALLED_APPS = [
     'core',
 ]
 
+# 1. Ensure CorsMiddleware is at the VERY TOP of your MIDDLEWARE list!
+# It should be right underneath SecurityMiddleware:
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # <-- MUST BE HERE!
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -137,15 +139,32 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# CORS Settings
+# 2. Bulletproof CORS Settings
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'https://v-ai-radiology.vercel.app',  # Your exact Vercel domain WITH the hyphen!
 ]
-if os.environ.get('FRONTEND_URL'):
-    CORS_ALLOWED_ORIGINS.append(os.environ.get('FRONTEND_URL'))
 
-CORS_ALLOW_ALL_ORIGINS = os.environ.get('DEBUG', 'False') == 'True'
+# 3. Allow ANY Vercel subdomain automatically (prevents typo blocks forever)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+]
+
+# 4. Allow all standard headers for authentication tokens
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
