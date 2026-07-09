@@ -19,7 +19,7 @@ Open a terminal in the `backend` directory and run:
 python manage.py runserver
 ```
 
-The server will start at `http://localhost:8000/`. API documentation/endpoints are:
+The server will start at `http://localhost:8000/`. API documentation/endpoints are :
 - Task list/create: `http://localhost:8000/api/tasks/`
 - Filter by date: `http://localhost:8000/api/tasks/?date=2026-07-06`
 - Annotated Image library: `http://localhost:8000/api/annotated-images/`
@@ -27,7 +27,7 @@ The server will start at `http://localhost:8000/`. API documentation/endpoints a
 ---
 
 ### 2. Running the Next.js Frontend
-Open a separate terminal in the `frontend` directory and run:
+Open a separate terminal in the `frontend` directory and run :
 
 ```bash
 # Run development server
