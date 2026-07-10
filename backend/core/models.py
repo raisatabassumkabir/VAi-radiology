@@ -1,20 +1,19 @@
 from django.db import models
 
+class PriorityChoices(models.TextChoices):
+    LOW = 'Low', 'Low'
+    MEDIUM = 'Medium', 'Medium'
+    HIGH = 'High', 'High'
+
+class StatusChoices(models.TextChoices):
+    TODO = 'To Do', 'To Do'
+    IN_PROGRESS = 'In Progress', 'In Progress'
+    DONE = 'Done', 'Done'
+
 class Task(models.Model):
-    PRIORITY_CHOICES = [
-        ('Low', 'Low'),
-        ('Medium', 'Medium'),
-        ('High', 'High'),
-    ]
-    STATUS_CHOICES = [
-        ('To Do', 'To Do'),
-        ('In Progress', 'In Progress'),
-        ('Done', 'Done'),
-    ]
-    
     title = models.CharField(max_length=255)
-    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    priority = models.CharField(max_length=10, choices=PriorityChoices.choices)
+    status = models.CharField(max_length=20, choices=StatusChoices.choices)
     due_date = models.DateField()
     tags = models.JSONField(default=list)
 
