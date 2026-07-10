@@ -147,16 +147,35 @@ STATIC_URL = 'static/'
 # Tell Django where to collect static files for production (Render/WhiteNoise)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Media files
 import os
 
-# Cloudinary persistent media storage
+# 1. Satisfy the legacy check in django-cloudinary-storage
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# 2. Modern Django 6.0 STORAGES configuration
 if 'CLOUDINARY_URL' in os.environ:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # CLOUD PRODUCTION: Cloudinary for Media, WhiteNoise for Static CSS/JS
+    STORAGES = {
+        "default": {
+            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
 else:
-    # Fallback for local development if no Cloudinary URL is present
+    # LOCAL DEVELOPMENT: Local hard drive for everything
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
 
 # 2. Bulletproof CORS Settings
 CORS_ALLOW_CREDENTIALS = True
