@@ -150,7 +150,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 import os
 
 # 1. Satisfy the legacy check in django-cloudinary-storage
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # 2. Modern Django 6.0 STORAGES configuration
 if 'CLOUDINARY_URL' in os.environ:
@@ -160,7 +160,7 @@ if 'CLOUDINARY_URL' in os.environ:
             "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
 else:
@@ -173,7 +173,7 @@ else:
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
 
