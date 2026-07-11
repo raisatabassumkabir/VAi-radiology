@@ -584,6 +584,69 @@ export const AnnotationStudio: React.FC = () => {
           )}
         </div>
 
+        {/* Horizontal Filmstrip / Carousel */}
+        {images.length > 0 && (
+          <div className="shrink-0 flex flex-col gap-2 border-t border-white/5 pt-4">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                Filmstrip (Scroll horizontally to slide through images)
+              </span>
+              <span className="text-[10px] text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20 font-bold">
+                {images.length} uploaded
+              </span>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+              {images.map((img, idx) => {
+                const isSelected = idx === activeIndex;
+                return (
+                  <div
+                    key={`carousel-img-${img.id}`}
+                    onClick={() => {
+                      cancelDrawing();
+                      setSelectedPolygonIdx(null);
+                      setActiveIndex(idx);
+                    }}
+                    className={`group relative w-32 shrink-0 aspect-[4/3] rounded-xl overflow-hidden border-2 cursor-pointer transition ${
+                      isSelected
+                        ? 'border-indigo-500 ring-2 ring-indigo-500/20 scale-[1.02] shadow-lg'
+                        : 'border-white/10 bg-slate-900 hover:border-white/20'
+                    }`}
+                  >
+                    {/* Delete Shortcut */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteImage(img.id);
+                      }}
+                      className="absolute top-1 right-1 p-1 rounded-lg bg-black/60 hover:bg-rose-500 text-slate-300 hover:text-white transition opacity-0 group-hover:opacity-100 z-10"
+                      title="Delete Image"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+
+                    {/* Thumbnail Image */}
+                    {getImageUrl(img.image) ? (
+                      <img src={getImageUrl(img.image)} alt={img.title} className="w-full h-full object-cover select-none pointer-events-none" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-600 bg-slate-950 text-xs">No Img</div>
+                    )}
+
+                    {/* Overlay info */}
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-1.5 flex flex-col justify-end">
+                      <p className="text-[10px] font-bold text-slate-200 truncate leading-none">
+                        {img.title}
+                      </p>
+                      <p className="text-[9px] text-slate-400 font-semibold mt-0.5 leading-none">
+                        {img.polygons.length} shape{img.polygons.length !== 1 ? 's' : ''}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {activeImage && (
           <div className="flex justify-between items-center border-t border-white/5 pt-4 shrink-0">
             <div className="flex items-center gap-2 text-xs text-slate-400">

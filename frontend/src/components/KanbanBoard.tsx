@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
-import { useTaskStore } from '../store/useTaskStore';
+import { useTaskStore, Task } from '../store/useTaskStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { Column } from './Column';
@@ -10,12 +10,24 @@ import { DateSelector } from './DateSelector';
 import { Plus, RefreshCw, X, Loader2, AlertCircle } from 'lucide-react';
 
 export const KanbanBoard: React.FC = () => {
-  const { selectedDate, tasks, isLoading, error, fetchTasksByDate, updateTaskStatus, addTask } = useTaskStore();
+  const { selectedDate, tasks, isLoading, error, fetchTasksByDate, updateTaskStatus, addTask, editTask, deleteTask } = useTaskStore();
   const [showAddForm, setShowAddForm] = useState(false);
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>('Medium');
   const [tagInput, setTagInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Edit form state
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editPriority, setEditPriority] = useState<'Low' | 'Medium' | 'High'>('Medium');
+  const [editStatus, setEditStatus] = useState<'To Do' | 'In Progress' | 'Done'>('To Do');
+  const [editTagInput, setEditTagInput] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Delete state
+  const [deletingTask, setDeletingTask] = useState<Task | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const token = useAuthStore((state) => state.token);
   const router = useRouter();
@@ -66,12 +78,58 @@ export const KanbanBoard: React.FC = () => {
       setTitle('');
       setTagInput('');
       setShowAddForm(false);
-      // No need to fetchTasksByDate here, addTask already updates the state locally, but we can if we want
     } catch (err: any) {
       console.error(err);
       alert(`Error creating task: ${err.message || 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleEditClick = (task: Task) => {
+    setEditingTask(task);
+    setEditTitle(task.title);
+    setEditPriority(task.priority);
+    setEditStatus(task.status);
+    setEditTagInput(task.tags ? task.tags.join(', ') : '');
+  };
+
+  const handleDeleteClick = (task: Task) => {
+    setDeletingTask(task);
+  };
+
+  const handleEditTaskSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingTask || !editTitle.trim()) return;
+
+    setIsEditing(true);
+    try {
+      await editTask(editingTask.id, {
+        title: editTitle.trim(),
+        priority: editPriority,
+        status: editStatus,
+        tags: editTagInput.split(',').map(t => t.trim()).filter(Boolean),
+      });
+      setEditingTask(null);
+    } catch (err: any) {
+      console.error(err);
+      alert(`Error updating task: ${err.message || 'Unknown error'}`);
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
+  const handleDeleteTaskConfirm = async () => {
+    if (!deletingTask) return;
+    setIsDeleting(true);
+    try {
+      await deleteTask(deletingTask.id);
+      setDeletingTask(null);
+    } catch (err: any) {
+      console.error(err);
+      alert(`Error deleting task: ${err.message || 'Unknown error'}`);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -131,9 +189,9 @@ export const KanbanBoard: React.FC = () => {
             </div>
           ) : (
             <>
-              <Column id="To Do" title="To Do" tasks={todoTasks} />
-              <Column id="In Progress" title="In Progress" tasks={inProgressTasks} />
-              <Column id="Done" title="Done" tasks={doneTasks} />
+              <Column id="To Do" title="To Do" tasks={todoTasks} onEdit={handleEditClick} onDelete={handleDeleteClick} />
+              <Column id="In Progress" title="In Progress" tasks={inProgressTasks} onEdit={handleEditClick} onDelete={handleDeleteClick} />
+              <Column id="Done" title="Done" tasks={doneTasks} onEdit={handleEditClick} onDelete={handleDeleteClick} />
             </>
           )}
         </div>
@@ -209,6 +267,111 @@ export const KanbanBoard: React.FC = () => {
                 {isSubmitting ? 'Creating...' : 'Create Task'}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Slide-out Panel / Modal for editing tasks */}
+      {editingTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-md bg-slate-900 border border-white/10 p-6 rounded-3xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setEditingTask(null)}
+              className="absolute top-4 right-4 p-1.5 hover:bg-white/5 rounded-xl text-slate-400 hover:text-white transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h3 className="text-xl font-bold text-slate-100 mb-5">Edit Task</h3>
+
+            <form onSubmit={handleEditTaskSubmit} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-slate-400">Task Title</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Review code architecture"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-400">Priority</label>
+                  <select
+                    value={editPriority}
+                    onChange={(e) => setEditPriority(e.target.value as 'Low' | 'Medium' | 'High')}
+                    className="bg-slate-950 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-white text-sm outline-none transition cursor-pointer"
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-400">Status</label>
+                  <select
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value as 'To Do' | 'In Progress' | 'Done')}
+                    className="bg-slate-950 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-white text-sm outline-none transition cursor-pointer"
+                  >
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-slate-400">Tags (comma-separated)</label>
+                <input
+                  type="text"
+                  placeholder="frontend, design, refactor"
+                  value={editTagInput}
+                  onChange={(e) => setEditTagInput(e.target.value)}
+                  className="bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isEditing}
+                className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 rounded-xl shadow-lg transition duration-200 mt-2 disabled:opacity-50"
+              >
+                {isEditing ? 'Saving...' : 'Save Changes'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-md bg-slate-900 border border-white/10 p-6 rounded-3xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-center">
+            <h3 className="text-xl font-bold text-slate-100 mb-2">Delete Task</h3>
+            <p className="text-slate-400 text-sm mb-6">
+              Are you sure you want to delete <span className="text-slate-200 font-semibold">"{deletingTask.title}"</span>? This action cannot be undone.
+            </p>
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => setDeletingTask(null)}
+                className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-semibold py-3 rounded-xl transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteTaskConfirm}
+                disabled={isDeleting}
+                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-xl transition disabled:opacity-50"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete Task'}
+              </button>
+            </div>
           </div>
         </div>
       )}

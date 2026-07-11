@@ -9,9 +9,11 @@ interface ColumnProps {
   id: 'To Do' | 'In Progress' | 'Done';
   title: string;
   tasks: Task[];
+  onEdit?: (task: Task) => void;
+  onDelete?: (task: Task) => void;
 }
 
-export const Column: React.FC<ColumnProps> = ({ id, title, tasks }) => {
+export const Column: React.FC<ColumnProps> = ({ id, title, tasks, onEdit, onDelete }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: id,
   });
@@ -49,7 +51,9 @@ export const Column: React.FC<ColumnProps> = ({ id, title, tasks }) => {
 
       <div className="flex flex-col gap-3 overflow-y-auto max-h-[600px] pr-1">
         {tasks.length > 0 ? (
-          tasks.map((task) => <TaskCard key={task.id} task={task} />)
+          tasks.map((task) => (
+            <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} />
+          ))
         ) : (
           <div className="flex flex-col items-center justify-center py-12 px-4 border border-dashed border-white/5 rounded-2xl bg-white/[0.01]">
             <p className="text-sm text-slate-500 text-center font-medium">Empty Column</p>

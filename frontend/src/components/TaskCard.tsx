@@ -3,13 +3,15 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { Task } from '../store/useTaskStore';
-import { Tag } from 'lucide-react';
+import { Tag, Edit2, Trash2 } from 'lucide-react';
 
 interface TaskCardProps {
   task: Task;
+  onEdit?: (task: Task) => void;
+  onDelete?: (task: Task) => void;
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
+export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `task-${task.id}`,
     data: {
@@ -42,7 +44,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       }`}
     >
       <div className="flex justify-between items-start gap-2">
-        <h4 className="text-slate-100 font-semibold text-base leading-snug group-hover:text-white transition">
+        <h4 className="text-slate-100 font-semibold text-base leading-snug group-hover:text-white transition max-w-[70%]">
           {task.title}
         </h4>
         <span
@@ -55,7 +57,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       </div>
 
       {task.tags && task.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-1">
+        <div className="flex flex-wrap gap-1.5 mt-1 pr-14">
           {task.tags.map((tag, idx) => {
             const trimmedTag = tag.trim();
             if (!trimmedTag) return null;
@@ -71,6 +73,32 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
           })}
         </div>
       )}
+
+      {/* Floating Action Buttons shown on hover */}
+      <div className="absolute bottom-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-white/5 shadow-lg z-20">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit?.(task);
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="p-1.5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition"
+          title="Edit Task"
+        >
+          <Edit2 className="w-3 h-3" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete?.(task);
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="p-1.5 hover:bg-rose-500/20 rounded-lg text-slate-400 hover:text-rose-400 transition"
+          title="Delete Task"
+        >
+          <Trash2 className="w-3 h-3" />
+        </button>
+      </div>
     </div>
   );
 };
