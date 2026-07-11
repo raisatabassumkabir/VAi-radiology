@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function AnnotatePage() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a]">
+    <main className="min-h-screen bg-[#0B0F19]">
       <AnnotationStudioWrapper />
     </main>
   );

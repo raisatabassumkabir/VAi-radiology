@@ -33,7 +33,7 @@ export const DateSelector: React.FC = () => {
       </button>
 
       <div className="flex items-center gap-2 text-sm text-slate-300 font-medium">
-        <Calendar className="w-4 h-4 text-indigo-400" />
+        <Calendar className="w-4 h-4 text-teal-400" />
         <input
           type="date"
           value={selectedDate}

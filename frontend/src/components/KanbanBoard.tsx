@@ -45,7 +45,7 @@ export const KanbanBoard: React.FC = () => {
   }, [selectedDate, fetchTasksByDate, token]);
 
   if (!token) {
-    return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin w-8 h-8 text-indigo-500" /></div>;
+    return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin w-8 h-8 text-teal-500" /></div>;
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -142,7 +142,7 @@ export const KanbanBoard: React.FC = () => {
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight text-white">
             Task Kanban
           </h1>
           <p className="text-slate-400 text-sm mt-1.5">
@@ -163,7 +163,7 @@ export const KanbanBoard: React.FC = () => {
 
           <button
             onClick={() => setShowAddForm(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold text-sm px-4 py-3 rounded-2xl shadow-lg hover:shadow-indigo-500/20 hover:scale-[1.02] transition active:scale-[0.98]"
+            className="flex items-center gap-2 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-sm px-4 py-3 rounded-2xl shadow-lg hover:shadow-teal-900/30 hover:scale-[1.02] transition active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
             Add Task
@@ -184,7 +184,7 @@ export const KanbanBoard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
           {isLoading && tasks.length === 0 ? (
             <div className="col-span-1 md:col-span-3 flex flex-col items-center justify-center py-32 bg-white/[0.02] border border-white/5 rounded-3xl backdrop-blur-md">
-              <Loader2 className="w-10 h-10 text-indigo-400 animate-spin" />
+              <Loader2 className="w-10 h-10 text-teal-400 animate-spin" />
               <p className="text-slate-400 font-medium text-sm mt-4">Loading tasks...</p>
             </div>
           ) : (
@@ -219,7 +219,7 @@ export const KanbanBoard: React.FC = () => {
                   placeholder="Review code architecture"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
+                  className="bg-white/5 border border-white/10 focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
                 />
               </div>
 
@@ -229,7 +229,7 @@ export const KanbanBoard: React.FC = () => {
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as 'Low' | 'Medium' | 'High')}
-                    className="bg-slate-950 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-white text-sm outline-none transition cursor-pointer"
+                    className="bg-[#0B0F19] border border-white/10 focus:border-teal-500/50 rounded-xl px-3 py-2.5 text-white text-sm outline-none transition cursor-pointer"
                   >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
@@ -255,14 +255,14 @@ export const KanbanBoard: React.FC = () => {
                   placeholder="frontend, design, refactor"
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
-                  className="bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
+                  className="bg-white/5 border border-white/10 focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 rounded-xl shadow-lg transition duration-200 mt-2 disabled:opacity-50"
+                className="flex items-center justify-center bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-xl shadow-lg transition duration-200 mt-2 disabled:opacity-50"
               >
                 {isSubmitting ? 'Creating...' : 'Create Task'}
               </button>
@@ -293,7 +293,7 @@ export const KanbanBoard: React.FC = () => {
                   placeholder="Review code architecture"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
+                  className="bg-white/5 border border-white/10 focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
                 />
               </div>
 
@@ -303,7 +303,7 @@ export const KanbanBoard: React.FC = () => {
                   <select
                     value={editPriority}
                     onChange={(e) => setEditPriority(e.target.value as 'Low' | 'Medium' | 'High')}
-                    className="bg-slate-950 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-white text-sm outline-none transition cursor-pointer"
+                    className="bg-[#0B0F19] border border-white/10 focus:border-teal-500/50 rounded-xl px-3 py-2.5 text-white text-sm outline-none transition cursor-pointer"
                   >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
@@ -316,7 +316,7 @@ export const KanbanBoard: React.FC = () => {
                   <select
                     value={editStatus}
                     onChange={(e) => setEditStatus(e.target.value as 'To Do' | 'In Progress' | 'Done')}
-                    className="bg-slate-950 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-white text-sm outline-none transition cursor-pointer"
+                    className="bg-[#0B0F19] border border-white/10 focus:border-teal-500/50 rounded-xl px-3 py-2.5 text-white text-sm outline-none transition cursor-pointer"
                   >
                     <option value="To Do">To Do</option>
                     <option value="In Progress">In Progress</option>
@@ -332,14 +332,14 @@ export const KanbanBoard: React.FC = () => {
                   placeholder="frontend, design, refactor"
                   value={editTagInput}
                   onChange={(e) => setEditTagInput(e.target.value)}
-                  className="bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
+                  className="bg-white/5 border border-white/10 focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isEditing}
-                className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 rounded-xl shadow-lg transition duration-200 mt-2 disabled:opacity-50"
+                className="flex items-center justify-center bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-xl shadow-lg transition duration-200 mt-2 disabled:opacity-50"
               >
                 {isEditing ? 'Saving...' : 'Save Changes'}
               </button>

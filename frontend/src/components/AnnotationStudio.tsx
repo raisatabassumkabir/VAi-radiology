@@ -102,16 +102,16 @@ export const AnnotationStudio: React.FC = () => {
 
   if (!isMounted) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#0a0a0a] text-slate-400">
-        <Loader2 className="animate-spin w-8 h-8 text-indigo-500" />
+      <div className="flex h-screen items-center justify-center bg-[#0B0F19] text-slate-400">
+        <Loader2 className="animate-spin w-8 h-8 text-teal-500" />
       </div>
     );
   }
 
   if (!token) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#0a0a0a] text-slate-400">
-        <Loader2 className="animate-spin w-8 h-8 text-indigo-500" />
+      <div className="flex h-screen items-center justify-center bg-[#0B0F19] text-slate-400">
+        <Loader2 className="animate-spin w-8 h-8 text-teal-500" />
       </div>
     );
   }
@@ -310,16 +310,16 @@ export const AnnotationStudio: React.FC = () => {
       <div className="w-full lg:w-80 shrink-0 flex flex-col gap-4 bg-white/5 border border-white/10 backdrop-blur-md p-5 rounded-3xl h-full overflow-hidden shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-slate-100">Image Library</h2>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-teal-500/10 text-teal-400 border border-teal-500/20">
             {images.length} Images
           </span>
         </div>
 
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex flex-col items-center justify-center border border-dashed border-white/20 hover:border-indigo-500/50 hover:bg-indigo-500/5 rounded-2xl p-6 transition duration-200 cursor-pointer text-slate-400 hover:text-white"
+          className="flex flex-col items-center justify-center border border-dashed border-white/20 hover:border-teal-500/50 hover:bg-teal-500/5 rounded-2xl p-6 transition duration-200 cursor-pointer text-slate-400 hover:text-white"
         >
-          <Upload className="w-6 h-6 mb-2 text-indigo-400" />
+          <Upload className="w-6 h-6 mb-2 text-teal-400" />
           <span className="text-sm font-semibold">Upload Images</span>
           <span className="text-xs text-slate-500 mt-1">PNG, JPG, JPEG</span>
           <input type="file" ref={fileInputRef} onChange={handleImageUpload} multiple accept="image/*" className="hidden" />
@@ -342,7 +342,7 @@ export const AnnotationStudio: React.FC = () => {
                 }}
                 className={`group flex items-center gap-3 p-2.5 rounded-2xl border cursor-pointer transition relative ${
                   idx === activeIndex
-                    ? 'border-indigo-500 bg-indigo-500/10'
+                    ? 'border-teal-500 bg-teal-500/10'
                     : 'border-white/5 bg-white/[0.02] hover:bg-white/5 hover:border-white/15'
                 }`}
               >
@@ -421,7 +421,7 @@ export const AnnotationStudio: React.FC = () => {
         <div className="flex-1 flex items-center justify-center relative overflow-hidden bg-black/60 rounded-2xl border border-white/5">
           {isLoading ? (
             <div className="flex flex-col items-center">
-              <Loader2 className="w-10 h-10 text-indigo-400 animate-spin" />
+              <Loader2 className="w-10 h-10 text-teal-400 animate-spin" />
             </div>
           ) : !activeImage ? (
             <div className="flex flex-col items-center text-center p-8 text-slate-500">
@@ -472,8 +472,8 @@ export const AnnotationStudio: React.FC = () => {
                               name="polygon"
                               points={flatPoints}
                               closed
-                              fill={isHighlighted ? 'rgba(245,158,11,0.2)' : 'rgba(167, 139, 250, 0.18)'}
-                              stroke={isHighlighted ? '#fbbf24' : '#a78bfa'}
+                              fill={isHighlighted ? 'rgba(245,158,11,0.2)' : 'rgba(6, 182, 212, 0.25)'}
+                              stroke={isHighlighted ? '#fbbf24' : '#06b6d4'}
                               strokeWidth={isHighlighted ? 2.5 : 2}
                               onMouseEnter={(e) => {
                                 const container = e.target.getStage()?.container();
@@ -494,7 +494,7 @@ export const AnnotationStudio: React.FC = () => {
                                 y={ptToPx(pt.y, canvasSize.height)}
                                 radius={isHighlighted ? 4.5 : 3.5}
                                 fill={isHighlighted ? '#fbbf24' : '#ffffff'}
-                                stroke={isHighlighted ? '#fbbf24' : '#8b5cf6'}
+                                stroke={isHighlighted ? '#fbbf24' : '#06b6d4'}
                                 strokeWidth={1.5}
                                 listening={false}
                                 shadowColor={isHighlighted ? '#fbbf24' : 'transparent'}
@@ -517,7 +517,7 @@ export const AnnotationStudio: React.FC = () => {
                               mousePos && typeof mousePos.x === 'number' && !isNaN(mousePos.x) && typeof mousePos.y === 'number' && !isNaN(mousePos.y) ? [ptToPx(mousePos.x, canvasSize.width), ptToPx(mousePos.y, canvasSize.height)] : []
                             )
                           }
-                          stroke="#818cf8"
+                          stroke="#06b6d4"
                           strokeWidth={2}
                           dash={[4, 4]}
                           listening={false}
@@ -534,7 +534,7 @@ export const AnnotationStudio: React.FC = () => {
                           radius={6}
                           hitStrokeWidth={20}
                           strokeScaleEnabled={false}
-                          fill="#ec4899"
+                          fill="#06b6d4"
                           stroke="white"
                           strokeWidth={2}
                           onClick={(e) => {
@@ -571,7 +571,7 @@ export const AnnotationStudio: React.FC = () => {
                           x={ptToPx(pt.x, canvasSize.width)}
                           y={ptToPx(pt.y, canvasSize.height)}
                           radius={4}
-                          fill="#818cf8"
+                          fill="#06b6d4"
                           stroke="#0f172a"
                           strokeWidth={1}
                         />
@@ -591,7 +591,7 @@ export const AnnotationStudio: React.FC = () => {
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                 Filmstrip (Scroll horizontally to slide through images)
               </span>
-              <span className="text-[10px] text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20 font-bold">
+              <span className="text-[10px] text-teal-400 bg-teal-500/10 px-1.5 py-0.5 rounded border border-teal-500/20 font-bold">
                 {images.length} uploaded
               </span>
             </div>
@@ -608,7 +608,7 @@ export const AnnotationStudio: React.FC = () => {
                     }}
                     className={`group relative w-32 shrink-0 aspect-[4/3] rounded-xl overflow-hidden border-2 cursor-pointer transition ${
                       isSelected
-                        ? 'border-indigo-500 ring-2 ring-indigo-500/20 scale-[1.02] shadow-lg'
+                        ? 'border-teal-500 ring-2 ring-teal-500/20 scale-[1.02] shadow-lg'
                         : 'border-white/10 bg-slate-900 hover:border-white/20'
                     }`}
                   >
@@ -650,7 +650,7 @@ export const AnnotationStudio: React.FC = () => {
         {activeImage && (
           <div className="flex justify-between items-center border-t border-white/5 pt-4 shrink-0">
             <div className="flex items-center gap-2 text-xs text-slate-400">
-              <Info className="w-4 h-4 text-indigo-400" />
+              <Info className="w-4 h-4 text-teal-400" />
               <span>
                 {currentPoints.length > 0
                   ? `Placing vertices (${currentPoints.length}). Click the first dot to close the shape.`

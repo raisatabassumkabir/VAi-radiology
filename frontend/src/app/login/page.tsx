@@ -46,12 +46,12 @@ export default function LoginPage() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-64px)] px-4">
       {/* Background decorations */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] -z-10" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] -z-10" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-900/10 rounded-full blur-[100px] -z-10" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-slate-800/20 rounded-full blur-[100px] -z-10" />
 
       <div className="w-full max-w-md p-8 bg-slate-900/60 border border-white/10 backdrop-blur-xl rounded-3xl shadow-2xl">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-4">
+          <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center shadow-lg shadow-teal-900/40 mb-4">
             <Layers className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-slate-100">Welcome Back</h1>
@@ -75,7 +75,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="demo@epic.com"
               required
-              className="bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 rounded-xl px-4 py-3 text-white text-sm outline-none transition"
+              className="bg-white/5 border border-white/10 focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 rounded-xl px-4 py-3 text-white text-sm outline-none transition"
             />
           </div>
 
@@ -87,14 +87,14 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 rounded-xl px-4 py-3 text-white text-sm outline-none transition"
+              className="bg-white/5 border border-white/10 focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 rounded-xl px-4 py-3 text-white text-sm outline-none transition"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-600/50 text-white font-semibold py-3 rounded-xl shadow-lg transition mt-2"
+            className="w-full flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-500 disabled:bg-teal-700/50 text-white font-semibold py-3 rounded-xl shadow-lg transition mt-2"
           >
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
             {!isLoading && <ArrowRight className="w-4 h-4" />}
@@ -104,7 +104,7 @@ export default function LoginPage() {
         <div className="mt-6 pt-6 border-t border-white/5 text-center">
           <p className="text-sm text-slate-500">
             Don't have an account?{' '}
-            <Link href="/" className="text-indigo-400 hover:text-indigo-300 font-semibold transition">
+            <Link href="/" className="text-teal-400 hover:text-teal-300 font-semibold transition">
               Go back home
             </Link>
           </p>

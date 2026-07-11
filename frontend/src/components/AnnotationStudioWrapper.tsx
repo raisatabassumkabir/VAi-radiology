@@ -8,8 +8,8 @@ const AnnotationStudio = dynamic(
   { 
     ssr: false,
     loading: () => (
-      <div className="flex h-screen items-center justify-center bg-[#0a0a0a] text-slate-400">
-        <Loader2 className="animate-spin w-8 h-8 text-indigo-500" />
+      <div className="flex h-screen items-center justify-center bg-[#0B0F19] text-slate-400">
+        <Loader2 className="animate-spin w-8 h-8 text-teal-500" />
       </div>
     )
   }

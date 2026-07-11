@@ -40,7 +40,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) =>
       {...listeners}
       {...attributes}
       className={`group relative flex flex-col gap-3 p-4 bg-white/[0.04] border border-white/[0.08] backdrop-blur-md rounded-2xl shadow-md transition duration-200 cursor-grab active:cursor-grabbing hover:border-white/20 hover:bg-white/[0.08] ${
-        isDragging ? 'opacity-40 border-indigo-500/50 shadow-indigo-500/10 shadow-2xl scale-[1.02]' : ''
+        isDragging ? 'opacity-40 ring-2 ring-teal-500 border-teal-500/50 shadow-teal-900/20 shadow-2xl scale-[1.02]' : ''
       }`}
     >
       <div className="flex justify-between items-start gap-2">
@@ -82,7 +82,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) =>
             onEdit?.(task);
           }}
           onPointerDown={(e) => e.stopPropagation()}
-          className="p-1.5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition"
+          className="p-1.5 hover:bg-teal-500/10 rounded-lg text-slate-400 hover:text-teal-300 transition"
           title="Edit Task"
         >
           <Edit2 className="w-3 h-3" />
