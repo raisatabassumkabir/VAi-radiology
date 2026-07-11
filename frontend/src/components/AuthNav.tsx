@@ -29,14 +29,14 @@ export const AuthNav: React.FC = () => {
         href="/tasks"
         className="flex items-center gap-1.5 text-sm font-semibold text-slate-400 hover:text-white transition duration-150"
       >
-        <LayoutDashboard className="w-4 h-4 text-indigo-400" />
+        <LayoutDashboard className="w-4 h-4 text-teal-400" />
         Kanban Board
       </Link>
       <Link
         href="/annotate"
         className="flex items-center gap-1.5 text-sm font-semibold text-slate-400 hover:text-white transition duration-150"
       >
-        <ImageIcon className="w-4 h-4 text-purple-400" />
+        <ImageIcon className="w-4 h-4 text-cyan-400" />
         Annotation Studio
       </Link>
       
@@ -53,7 +53,7 @@ export const AuthNav: React.FC = () => {
       ) : (
         <Link
           href="/login"
-          className="flex items-center gap-1.5 text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition duration-150"
+          className="flex items-center gap-1.5 text-sm font-semibold text-teal-400 hover:text-teal-300 transition duration-150"
         >
           <LogIn className="w-4 h-4" />
           Login
