@@ -21,10 +21,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased dark`}>
+    <html lang="en" className={`dark ${inter.variable}`}>
       <body
         suppressHydrationWarning={true}
-        className="min-h-full flex flex-col bg-[#0B0F19] text-slate-100 font-sans selection:bg-teal-500/30 selection:text-white"
+        className="min-h-screen flex flex-col bg-[#0B0F19] text-slate-50 antialiased font-sans selection:bg-teal-500/30 selection:text-white"
       >
         {/* Decorative background gradients for glassmorphism layout */}
         <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none">
